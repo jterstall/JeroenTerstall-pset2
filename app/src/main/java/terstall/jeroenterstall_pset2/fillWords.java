@@ -27,11 +27,15 @@ public class fillWords extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fill_words);
-
         Intent intent = getIntent();
         Story story = (Story) intent.getSerializableExtra(OBJECT_NAME);
         int storyNumber = intent.getIntExtra(STORY_NUMBER, 0);
-        if(story.isFilledIn() != true)
+        mainActivity(story, storyNumber);
+    }
+
+    private void mainActivity(Story story, int storyNumber)
+    {
+        if (story.isFilledIn() != true)
         {
             placeholderCount = story.getPlaceholderRemainingCount();
             nextPlaceholder = story.getNextPlaceholder();
@@ -48,9 +52,29 @@ public class fillWords extends AppCompatActivity
         {
             Intent nextIntent = new Intent(this, showText.class);
             nextIntent.putExtra(OBJECT_NAME, story);
-            nextIntent.putExtra(STORY_NUMBER,storyNumber);
+            nextIntent.putExtra(STORY_NUMBER, storyNumber);
             startActivity(nextIntent);
         }
+    }
+
+    public void nextPlaceholder(View view)
+    {
+        Intent intent = getIntent();
+        Story story = (Story) intent.getSerializableExtra(OBJECT_NAME);
+        int storyNumber = intent.getIntExtra(STORY_NUMBER, 0);
+        EditText editwordtype = (EditText) findViewById(R.id.edit_word_type);
+        String input = editwordtype.getText().toString();
+        editwordtype.setText("");
+        if(input.trim().length() != 0)
+        {
+            story.fillInPlaceholder("<b>" + input + "</b>");
+            mainActivity(story, storyNumber);
+        }
+        else
+        {
+            System.out.println("Use valid input");
+        }
+
     }
 
     @Override
@@ -66,27 +90,5 @@ public class fillWords extends AppCompatActivity
             return true;
         }
         return false;
-    }
-
-    public void nextPlaceholder(View view)
-    {
-        Intent intent = getIntent();
-        Story story = (Story) intent.getSerializableExtra(OBJECT_NAME);
-        int storyNumber = intent.getIntExtra(STORY_NUMBER, 0);
-        EditText editwordtype = (EditText) findViewById(R.id.edit_word_type);
-        String input = editwordtype.getText().toString();
-        if(input.trim().length() != 0)
-        {
-            story.fillInPlaceholder("<b>" + input + "</b>");
-            Intent newIntent = new Intent(this, fillWords.class);
-            newIntent.putExtra(OBJECT_NAME, story);
-            newIntent.putExtra(STORY_NUMBER, storyNumber);
-            startActivity(newIntent);
-        }
-        else
-        {
-            System.out.println("Use valid input");
-        }
-
     }
 }
